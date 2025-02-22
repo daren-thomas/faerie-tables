@@ -400,4 +400,21 @@ FodyWeavers.xsd
 *.sln.iml
 
 
-.DS_Store
+## ChatGPT suggestions
+# .NET defaults
+bin/
+obj/
+*.user
+*.suo
+*.swp
+*.db
+*.log
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+
+# Others
+*.DS_Store

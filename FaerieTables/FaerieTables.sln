@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaerieTables.Api", "FaerieTables.Api\FaerieTables.Api.csproj", "{8FEFCED9-6DF7-4278-847E-EDE0D5AE25F8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaerieTables.Web", "FaerieTables.Web\FaerieTables.Web.csproj", "{10570793-8319-4DC3-A8FA-B0E5A5668176}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaerieTables.Core", "FaerieTables.Core\FaerieTables.Core.csproj", "{B0B58AF5-3461-4127-B57E-581BBA83361C}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8FEFCED9-6DF7-4278-847E-EDE0D5AE25F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FEFCED9-6DF7-4278-847E-EDE0D5AE25F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FEFCED9-6DF7-4278-847E-EDE0D5AE25F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FEFCED9-6DF7-4278-847E-EDE0D5AE25F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{10570793-8319-4DC3-A8FA-B0E5A5668176}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{10570793-8319-4DC3-A8FA-B0E5A5668176}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{10570793-8319-4DC3-A8FA-B0E5A5668176}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{10570793-8319-4DC3-A8FA-B0E5A5668176}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0B58AF5-3461-4127-B57E-581BBA83361C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0B58AF5-3461-4127-B57E-581BBA83361C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0B58AF5-3461-4127-B57E-581BBA83361C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0B58AF5-3461-4127-B57E-581BBA83361C}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

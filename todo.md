@@ -6,20 +6,20 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
 
 ## Chunk A: Core Solution Setup
 
-- [ ] **Create a new .NET solution** named `FaerieTables`
-  - [ ] Use `dotnet new sln`
-- [ ] **Create FaerieTables.Api** (ASP.NET Core Web API)
-  - [ ] Add a minimal “Hello World” endpoint at `/api/hello`
-- [ ] **Create FaerieTables.Web** (Blazor Server or WASM + ASP.NET Hosted)
-  - [ ] Have a default `Index` page showing `"Hello Faerie Tables"`
-- [ ] **(Optional) Create FaerieTables.Core** for domain logic (shared library)
-  - [ ] Reference it from both `FaerieTables.Api` and `FaerieTables.Web`
-- [ ] **Add .gitignore** for .NET, Docker, etc.
+- [x] **Create a new .NET solution** named `FaerieTables`
+  - [x] Use `dotnet new sln`
+- [x] **Create FaerieTables.Api** (ASP.NET Core Web API)
+  - [x] Add a minimal “Hello World” endpoint at `/api/hello`
+- [x] **Create FaerieTables.Web** (Blazor Server or WASM + ASP.NET Hosted)
+  - [x] Have a default `Index` page showing `"Hello Faerie Tables"`
+- [x] **(Optional) Create FaerieTables.Core** for domain logic (shared library)
+  - [x] Reference it from both `FaerieTables.Api` and `FaerieTables.Web`
+- [x] **Add .gitignore** for .NET, Docker, etc.
 
 **Validation Check:**
-- [ ] Confirm solution builds successfully
-- [ ] Confirm “Hello World” endpoint is reachable
-- [ ] Confirm Blazor page displays
+- [x] Confirm solution builds successfully
+- [x] Confirm “Hello World” endpoint is reachable
+- [x] Confirm Blazor page displays
 
 ---
 
