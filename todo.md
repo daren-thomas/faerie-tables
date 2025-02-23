@@ -44,8 +44,8 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
 
 ## Chunk C: Table Management API
 
-- [ ] **Define Entities** (if not done in a separate library):
-  - [ ] `Table`, `TableColumn`, `TableRow`, `RowValue`, `Tag`, `TableTag`, `Session`, `Roll`, `RollResult`
+- [x] **Define Entities** (if not done in a separate library):
+  - [x] `Table`, `TableColumn`, `TableRow`, `RowValue`, `Tag`, `TableTag`, `Session`, `Roll`, `RollResult`
 - [ ] **Create DTO classes** for table management (e.g., `TableDto`)
 - [ ] **Implement TableController** with:
   - [ ] `GET /tables` (searchable)
