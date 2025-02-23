@@ -25,20 +25,20 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
 
 ## Chunk B: Data Modeling & Persistence
 
-- [ ] **Install EF Core** packages in `FaerieTables.Api`:
-  - [ ] `Microsoft.EntityFrameworkCore`
-  - [ ] `Microsoft.EntityFrameworkCore.Sqlite`
-  - [ ] `Microsoft.EntityFrameworkCore.Design`
-- [ ] **Create `RandomTableContext`** (`DbContext`) in `FaerieTables.Api`
-  - [ ] Register it in `Program.cs` with the SQLite connection string
-- [ ] **Generate Migrations**:
-  - [ ] `dotnet ef migrations add InitialCreate`
-  - [ ] `dotnet ef database update`
-- [ ] **Verify** the SQLite database file is created
+- [x] **Install EF Core** packages in `FaerieTables.Api`:
+  - [x] `Microsoft.EntityFrameworkCore`
+  - [x] `Microsoft.EntityFrameworkCore.Sqlite`
+  - [x] `Microsoft.EntityFrameworkCore.Design`
+- [x] **Create `RandomTableContext`** (`DbContext`) in `FaerieTables.Api`
+  - [x] Register it in `Program.cs` with the SQLite connection string
+- [x] **Generate Migrations**:
+  - [x] `dotnet ef migrations add InitialCreate`
+  - [x] `dotnet ef database update`
+- [x] **Verify** the SQLite database file is created
 
 **Validation Check:**
-- [ ] Confirm no errors during migration
-- [ ] Confirm a functioning DBContext
+- [x] Confirm no errors during migration
+- [x] Confirm a functioning DBContext
 
 ---
 
