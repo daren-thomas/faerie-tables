@@ -2,6 +2,7 @@
 using FaerieTables.Api.Entities;
 using FaerieTables.Api.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 
 namespace FaerieTables.Api.Controllers
 {
@@ -30,22 +31,22 @@ namespace FaerieTables.Api.Controllers
                 return BadRequest("Missing required parameters.");
             }
             
-            // Retrieve the session to ensure it exists.
+            // Ensure the session exists before proceeding
             var session = await _context.Sessions.FindAsync(request.SessionId);
             if (session == null)
                 return NotFound($"Session with ID {request.SessionId} not found.");
 
             try
             {
-                // Get the roll results (a dictionary mapping TableColumnId to value)
+                // Perform the roll using the rolling service (row-based or column-based)
                 var results = await _rollingService.RollTableAsync(request.TableId, request.Mode, request.Overrides);
 
-                // Retrieve the table to get additional info (like title)
+                // Retrieve the table for additional details
                 var table = await _context.Tables.FindAsync(request.TableId);
                 if (table == null)
                     return NotFound($"Table with ID {request.TableId} not found.");
 
-                // Create a new Roll entity
+                // Create a Roll entity linked to the session
                 var roll = new Roll
                 {
                     RollId = Guid.NewGuid(),
@@ -56,7 +57,7 @@ namespace FaerieTables.Api.Controllers
                     Timestamp = DateTime.UtcNow,
                 };
 
-                // Create RollResult records from the results dictionary
+                // Create RollResult records for each result entry
                 foreach (var result in results)
                 {
                     roll.RollResults.Add(new RollResult
@@ -71,7 +72,7 @@ namespace FaerieTables.Api.Controllers
                 _context.Rolls.Add(roll);
                 await _context.SaveChangesAsync();
 
-                // Prepare a response DTO that includes the roll id and results.
+                // Prepare the response DTO
                 var responseDto = new RollResponseDto
                 {
                     RollId = roll.RollId,
@@ -79,9 +80,8 @@ namespace FaerieTables.Api.Controllers
                     TableTitle = roll.TableTitle,
                     Mode = roll.Mode,
                     Timestamp = roll.Timestamp,
-                    Results = results.ToDictionary(kvp => 
-                        // Optionally, lookup the column name from the table columns.
-                        _context.TableColumns.FirstOrDefault(tc => tc.Id == kvp.Key)?.Name ?? kvp.Key.ToString(),
+                    Results = results.ToDictionary(
+                        kvp => _context.TableColumns.FirstOrDefault(tc => tc.Id == kvp.Key)?.Name ?? kvp.Key.ToString(),
                         kvp => kvp.Value)
                 };
 

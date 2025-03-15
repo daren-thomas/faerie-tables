@@ -90,24 +90,24 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
 
 ## Chunk E: Session Logging
 
-- [ ] **Create SessionController**:
-  - [ ] `POST /sessions` to create a session
-  - [ ] `GET /sessions/{sessionId}` to retrieve session details
-  - [ ] `GET /sessions/{sessionId}/rolls` for all rolls in a session
-  - [ ] `DELETE /sessions/{sessionId}/rolls` to clear logs
-- [ ] **Link Rolls** to session ID
-- [ ] **Markdown export** (e.g., `GET /sessions/{sessionId}/export`)
-  - [ ] Format each roll as a bullet list item with table references
-- [ ] **Integration Tests** for:
-  - [ ] Session creation
-  - [ ] Roll retrieval
-  - [ ] Export to Markdown
-  - [ ] Clearing logs
+- [x] **Create SessionController**:
+  - [x] `POST /sessions` to create a session
+  - [x] `GET /sessions/{sessionId}` to retrieve session details
+  - [x] `GET /sessions/{sessionId}/rolls` for all rolls in a session
+  - [x] `DELETE /sessions/{sessionId}/rolls` to clear logs
+- [x] **Link Rolls** to session ID
+- [x] **Markdown export** (e.g., `GET /sessions/{sessionId}/export`)
+  - [x] Format each roll as a bullet list item with table references
+- [x] **Integration Tests** for:
+  - [x] Session creation
+  - [x] Roll retrieval
+  - [x] Export to Markdown
+  - [x] Clearing logs
 
 **Validation Check:**
-- [ ] Session data is correctly persisted
-- [ ] Markdown export is formatted properly
-- [ ] Clearing logs works as intended
+- [x] Session data is correctly persisted
+- [x] Markdown export is formatted properly
+- [x] Clearing logs works as intended
 
 ---
 

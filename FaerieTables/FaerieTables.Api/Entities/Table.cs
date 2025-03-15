@@ -1,4 +1,6 @@
-﻿namespace FaerieTables.Api.Entities;
+﻿using System.Text.Json.Serialization;
+
+namespace FaerieTables.Api.Entities;
 
 public class Table
 {
@@ -101,6 +103,7 @@ public class RollResult
     public string Value { get; set; } = null!;
 
     // Navigation
+    [JsonIgnore]
     public Roll? Roll { get; set; }
     public TableColumn? TableColumn { get; set; }
 }
