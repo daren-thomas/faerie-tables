@@ -15,6 +15,7 @@ builder.Services.AddDbContext<RandomTableContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddScoped<ITableService, TableService>();
+builder.Services.AddScoped<IRollingService, RollingService>();
 
 var app = builder.Build();
 

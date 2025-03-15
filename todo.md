@@ -68,23 +68,23 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
 
 ## Chunk D: Rolling Logic
 
-- [ ] **Create RollingService** (or equivalent):
-  - [ ] Fetch table data
-  - [ ] Roll logic (row-based vs. column-based)
-  - [ ] Override merges
-- [ ] **Implement RollController**:
-  - [ ] `POST /rolls`:
-    - [ ] Accepts table ID, session ID, mode, overrides
-    - [ ] Calls RollingService, persists Roll & RollResult
-  - [ ] `POST /rolls/manual` (optional approach for manual-only rolls)
-- [ ] **Unit Tests** for RollingService:
-  - [ ] Random selection correctness
-  - [ ] Override logic
-- [ ] **Integration Tests** for RollController
+- [x] **Create RollingService** (or equivalent):
+  - [x] Fetch table data
+  - [x] Roll logic (row-based vs. column-based)
+  - [x] Override merges
+- [x] **Implement RollController**:
+  - [x] `POST /rolls`:
+    - [x] Accepts table ID, session ID, mode, overrides
+    - [x] Calls RollingService, persists Roll & RollResult
+  - [x] `POST /rolls/manual` (optional approach for manual-only rolls)
+- [x] **Unit Tests** for RollingService:
+  - [x] Random selection correctness
+  - [x] Override logic
+- [x] **Integration Tests** for RollController
 
 **Validation Check:**
-- [ ] Rolling endpoints produce correct random results
-- [ ] Overrides are properly applied
+- [x] Rolling endpoints produce correct random results
+- [x] Overrides are properly applied
 
 ---
 
