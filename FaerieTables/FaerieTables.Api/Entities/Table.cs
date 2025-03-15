@@ -4,10 +4,10 @@ public class Table
 {
     public Guid Id { get; set; }
     public string Title { get; set; } = null!;
-    public string Source { get; set; } = null!;
-    public string License { get; set; } = null!;
-    public string Description { get; set; } = null!;
-    public string DiceRange { get; set; } = null!;
+    public string Source { get; set; } = string.Empty;
+    public string License { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string DiceRange { get; set; } = string.Empty;
 
     // Navigation properties
     public ICollection<TableColumn> Columns { get; set; } = new List<TableColumn>();

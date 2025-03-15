@@ -46,23 +46,23 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
 
 - [x] **Define Entities** (if not done in a separate library):
   - [x] `Table`, `TableColumn`, `TableRow`, `RowValue`, `Tag`, `TableTag`, `Session`, `Roll`, `RollResult`
-- [ ] **Create DTO classes** for table management (e.g., `TableDto`)
-- [ ] **Implement TableController** with:
-  - [ ] `GET /tables` (searchable)
-  - [ ] `GET /tables/{id}`
-  - [ ] `POST /tables`
-  - [ ] `PUT /tables/{id}`
-  - [ ] `DELETE /tables/{id}`
-- [ ] **Add basic validation** (e.g., require Title, validate `DiceRange`)
-- [ ] **Unit Tests** (service-level or EF repository tests)
-- [ ] **Integration Tests** (in-memory SQLite or test DB):
-  - [ ] Validate CRUD operations
-  - [ ] Confirm 404s for missing resources
-  - [ ] Confirm 400s for validation errors
+- [x] **Create DTO classes** for table management (e.g., `TableDto`)
+- [x] **Implement TableController** with:
+  - [x] `GET /tables` (searchable)
+  - [x] `GET /tables/{id}`
+  - [x] `POST /tables`
+  - [x] `PUT /tables/{id}`
+  - [x] `DELETE /tables/{id}`
+- [x] **Add basic validation** (e.g., require Title, validate `DiceRange`)
+- [x] **Unit Tests** (service-level or EF repository tests)
+- [x] **Integration Tests** (in-memory SQLite or test DB):
+  - [x] Validate CRUD operations
+  - [x] Confirm 404s for missing resources
+  - [x] Confirm 400s for validation errors
 
 **Validation Check:**
-- [ ] All TableController endpoints function as intended
-- [ ] All tests pass
+- [x] All TableController endpoints function as intended
+- [x] All tests pass
 
 ---
 

@@ -7,20 +7,15 @@ namespace FaerieTables.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class TableController : ControllerBase
+public class TableController(ITableService tableService) : ControllerBase
 {
-    private readonly ITableService _tableService;
-
-    public TableController(ITableService tableService)
-    {
-        _tableService = tableService;
-    }
-
-    // GET /tables?search=...
+    // GET /api/table?search=...
     [HttpGet]
     public async Task<ActionResult<List<TableDto>>> GetAll([FromQuery] string? search)
     {
-        var tables = await _tableService.GetAllAsync(search);
+        var tables = await tableService.GetAllAsync(search);
+
+        // Map entities to DTOs
         var dtos = tables.Select(t => new TableDto
         {
             Id = t.Id,
@@ -29,16 +24,19 @@ public class TableController : ControllerBase
             License = t.License,
             Description = t.Description,
             DiceRange = t.DiceRange
+            // If you want to populate columns/rows in the same response, you can do so:
+            // Columns = t.Columns.Select(c => new TableColumnDto { ... }).ToList(),
+            // Rows = t.Rows.Select(r => new TableRowDto { ... }).ToList()
         }).ToList();
 
         return Ok(dtos);
     }
 
-    // GET /tables/{id}
+    // GET /api/table/{id}
     [HttpGet("{id:guid}")]
     public async Task<ActionResult<TableDto>> GetById(Guid id)
     {
-        var table = await _tableService.GetByIdAsync(id);
+        var table = await tableService.GetByIdAsync(id);
         if (table == null)
             return NotFound();
 
@@ -50,35 +48,38 @@ public class TableController : ControllerBase
             License = table.License,
             Description = table.Description,
             DiceRange = table.DiceRange
+            // Could also map columns/rows here if needed
         };
         return Ok(dto);
     }
 
-    // POST /tables
+    // POST /api/table
     [HttpPost]
     public async Task<ActionResult<TableDto>> Create([FromBody] TableDto dto)
     {
-        // Minimal check
+        // Validate the DTO
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var newTable = new Table
+        var entity = new Table
         {
             Id = Guid.NewGuid(),
             Title = dto.Title,
-            Source = dto.Source ?? string.Empty,
-            License = dto.License ?? string.Empty,
-            Description = dto.Description ?? string.Empty,
-            DiceRange = dto.DiceRange ?? string.Empty
+            Source = dto.Source,
+            License = dto.License,
+            Description = dto.Description,
+            DiceRange = dto.DiceRange
         };
 
-        newTable = await _tableService.CreateAsync(newTable);
+        // Persist via service
+        var created = await tableService.CreateAsync(entity);
 
-        dto.Id = newTable.Id;
-        return CreatedAtAction(nameof(GetById), new { id = newTable.Id }, dto);
+        // Return the created DTO
+        dto.Id = created.Id;
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, dto);
     }
 
-    // PUT /tables/{id}
+    // PUT /api/table/{id}
     [HttpPut("{id:guid}")]
     public async Task<IActionResult> Update(Guid id, [FromBody] TableDto dto)
     {
@@ -88,29 +89,29 @@ public class TableController : ControllerBase
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        var existing = await _tableService.GetByIdAsync(id);
+        var existing = await tableService.GetByIdAsync(id);
         if (existing == null)
             return NotFound();
 
         existing.Title = dto.Title;
-        existing.Source = dto.Source ?? string.Empty;
-        existing.License = dto.License ?? string.Empty;
-        existing.Description = dto.Description ?? string.Empty;
-        existing.DiceRange = dto.DiceRange ?? string.Empty;
+        existing.Source = dto.Source;
+        existing.License = dto.License;
+        existing.Description = dto.Description;
+        existing.DiceRange = dto.DiceRange;
 
-        await _tableService.UpdateAsync(existing);
+        await tableService.UpdateAsync(existing);
         return NoContent();
     }
 
-    // DELETE /tables/{id}
+    // DELETE /api/table/{id}
     [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
-        var existing = await _tableService.GetByIdAsync(id);
+        var existing = await tableService.GetByIdAsync(id);
         if (existing == null)
             return NotFound();
 
-        await _tableService.DeleteAsync(existing);
+        await tableService.DeleteAsync(existing);
         return NoContent();
     }
 }

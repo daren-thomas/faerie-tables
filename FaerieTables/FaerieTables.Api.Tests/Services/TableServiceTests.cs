@@ -46,20 +46,12 @@ public class TableServiceTests : IClassFixture<WebApplicationFactory<Program>>
     [Fact]
     public async Task CreateAsync_Should_Add_NewTable_To_Db()
     {
-        // ARRANGE
-        // Get a scoped service provider from the *modified* factory
         using var scope = _factory.Services.CreateScope();
-
-        // Obtain the real EF context from DI
         var dbContext = scope.ServiceProvider.GetRequiredService<RandomTableContext>();
-
-        // Instantiate TableService with that context
         var service = new TableService(dbContext);
 
-        // ACT
         var table = new Table
         {
-            Id = default,
             Title = "Test Table",
             Source = "Test",
             License = "Test",
@@ -69,13 +61,95 @@ public class TableServiceTests : IClassFixture<WebApplicationFactory<Program>>
             Rows = new List<TableRow>(),
             TableTags = new List<TableTag>()
         };
+
         var result = await service.CreateAsync(table);
 
-        // ASSERT
         Assert.NotEqual(Guid.Empty, result.Id);
-
-        // Double-check the table count from the same context
         var count = await dbContext.Tables.CountAsync();
         Assert.Equal(1, count);
+    }
+
+
+
+    [Fact]
+    public async Task GetByIdAsync_Should_Return_Null_If_Not_Found()
+    {
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<RandomTableContext>();
+        var service = new TableService(dbContext);
+
+        var result = await service.GetByIdAsync(Guid.NewGuid());
+        Assert.Null(result);
+    }
+
+    [Fact]
+    public async Task UpdateAsync_Should_Persist_Changes()
+    {
+        // Arrange
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<RandomTableContext>();
+        var service = new TableService(dbContext);
+
+        var table = new Table { Title = "Old Title" };
+        var created = await service.CreateAsync(table);
+
+        // Act
+        created.Title = "New Title";
+        await service.UpdateAsync(created);
+
+        // Assert
+        using var scope2 = _factory.Services.CreateScope();
+        await using var context = GetRandomTableContext(scope2);
+        var updated = await context.Tables.FindAsync(created.Id);
+        Assert.Equal("New Title", updated?.Title);
+    }
+
+    [Fact]
+    public async Task DeleteAsync_Should_Remove_Table()
+    {
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<RandomTableContext>();
+        var service = new TableService(dbContext);
+
+        var table = new Table { Title = "To be removed" };
+        var created = await service.CreateAsync(table);
+
+        await service.DeleteAsync(created);
+
+        using var scope2 = _factory.Services.CreateScope();
+        await using var context = GetRandomTableContext(scope2);
+        var found = await context.Tables.FindAsync(created.Id);
+        Assert.Null(found);
+    }
+
+    [Fact]
+    public async Task GetAllAsync_Search_Should_Filter_Results()
+    {
+        // Arrange
+        using var scope = _factory.Services.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<RandomTableContext>();
+        var service = new TableService(dbContext);
+
+        // Create a few test tables
+        await service.CreateAsync(new Table { Title = "Dungeon" });
+        await service.CreateAsync(new Table { Title = "Dragon" });
+        await service.CreateAsync(new Table { Title = "Goblin" });
+
+        // Act
+        var results1 = await service.GetAllAsync("drag");
+        var results2 = await service.GetAllAsync("dung");
+        var results3 = await service.GetAllAsync("xyz");
+
+        // Assert
+        Assert.Single(results1); // "Dragon"
+        Assert.Single(results2); // "Dungeon"
+        Assert.Empty(results3); // none match "xyz"
+    }
+
+    private RandomTableContext GetRandomTableContext(IServiceScope scope)
+    {
+        // Obtain the real EF context from DI
+        var dbContext = scope.ServiceProvider.GetRequiredService<RandomTableContext>();
+        return dbContext;
     }
 }
