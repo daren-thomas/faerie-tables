@@ -1,0 +1,145 @@
+﻿@page "/roll"
+@inject HttpClient Http
+
+<h3>Roll Table</h3>
+
+<div class="mb-3">
+    <label>Select Table:</label>
+    <select class="form-select" @bind="selectedTableId">
+        <option value="">-- Select Table --</option>
+        @if(tables != null)
+        {
+            @foreach (var t in tables)
+            {
+                <option value="@t.Id">@t.Title</option>
+            }
+        }
+    </select>
+</div>
+
+<div class="mb-3">
+    <label>Mode:</label>
+    <select class="form-select" @bind="mode">
+        <option value="row">Row</option>
+        <option value="column">Column</option>
+    </select>
+</div>
+
+<button class="btn btn-primary mb-3" @onclick="RollTable">Roll</button>
+
+@if (rollResult != null)
+{
+    <h4>Roll Result</h4>
+    <ul class="list-group">
+        @foreach (var kvp in rollResult.Results)
+        {
+            <li class="list-group-item">@kvp.Key: @kvp.Value</li>
+        }
+    </ul>
+}
+
+@if (sessionRolls != null)
+{
+    <h4 class="mt-4">Session Roll Log</h4>
+    <ul class="list-group">
+        @foreach (var r in sessionRolls)
+        {
+            <li class="list-group-item">
+                <strong>@r.TableTitle</strong> (@r.Timestamp.ToString("yyyy-MM-dd HH:mm:ss")):
+                @foreach (var rr in r.RollResults)
+                {
+                    <span>@rr.Value </span>
+                }
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<TableDto>? tables;
+    private Guid selectedTableId;
+    private string mode = "row";
+    private RollResponseDto? rollResult;
+    private List<Roll>? sessionRolls;
+    // For simplicity, we hardcode a session id; in a real app, this comes from authentication/session management.
+    private Guid sessionId = Guid.NewGuid();
+
+    protected override async Task OnInitializedAsync()
+    {
+        tables = await Http.GetFromJsonAsync<List<TableDto>>("/api/table");
+    }
+
+    private async Task RollTable()
+    {
+        if (selectedTableId == Guid.Empty)
+            return;
+
+        var rollRequest = new RollRequestDto
+        {
+            TableId = selectedTableId,
+            SessionId = sessionId,
+            Mode = mode,
+            Overrides = new List<OverrideDto>()
+        };
+
+        var response = await Http.PostAsJsonAsync("/api/roll", rollRequest);
+        if (response.IsSuccessStatusCode)
+        {
+            rollResult = await response.Content.ReadFromJsonAsync<RollResponseDto>();
+            sessionRolls = await Http.GetFromJsonAsync<List<Roll>>($"/api/session/{sessionId}/rolls");
+        }
+        else
+        {
+            // Handle error appropriately
+        }
+    }
+
+    public class TableDto
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; } = "";
+    }
+
+    public class RollRequestDto
+    {
+        public Guid TableId { get; set; }
+        public Guid SessionId { get; set; }
+        public string Mode { get; set; } = "";
+        public List<OverrideDto>? Overrides { get; set; }
+    }
+
+    public class RollResponseDto
+    {
+        public Guid RollId { get; set; }
+        public Guid TableId { get; set; }
+        public string TableTitle { get; set; } = "";
+        public string Mode { get; set; } = "";
+        public DateTime Timestamp { get; set; }
+        public Dictionary<string, string> Results { get; set; } = new();
+    }
+
+    public class OverrideDto
+    {
+        public string Column { get; set; } = "";
+        public string Value { get; set; } = "";
+    }
+
+    public class Roll
+    {
+        public Guid RollId { get; set; }
+        public Guid SessionId { get; set; }
+        public Guid TableId { get; set; }
+        public string TableTitle { get; set; } = "";
+        public string Mode { get; set; } = "";
+        public DateTime Timestamp { get; set; }
+        public List<RollResult> RollResults { get; set; } = new();
+    }
+
+    public class RollResult
+    {
+        public Guid Id { get; set; }
+        public Guid RollId { get; set; }
+        public Guid TableColumnId { get; set; }
+        public string Value { get; set; } = "";
+    }
+}

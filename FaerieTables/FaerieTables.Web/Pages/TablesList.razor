@@ -1,0 +1,66 @@
+﻿@page "/tables"
+@inject HttpClient Http
+
+<h3>Tables List</h3>
+
+<div class="mb-3">
+    <input type="text" placeholder="Search tables..." @bind="searchTerm" class="form-control" />
+    <button class="btn btn-primary mt-2" @onclick="SearchTables">Search</button>
+</div>
+
+@if (tables == null)
+{
+    <p>Loading...</p>
+}
+else if (!tables.Any())
+{
+    <p>No tables found.</p>
+}
+else
+{
+    <ul class="list-group">
+        @foreach (var table in tables)
+        {
+            <li class="list-group-item">
+                <a href="@($"/tableeditor/{table.Id}")">@table.Title</a>
+            </li>
+        }
+    </ul>
+}
+
+@code {
+    private List<TableDto>? tables;
+    private string searchTerm = "";
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTables();
+    }
+
+    private async Task LoadTables()
+    {
+        if (string.IsNullOrWhiteSpace(searchTerm))
+        {
+            tables = await Http.GetFromJsonAsync<List<TableDto>>("/api/table");
+        }
+        else
+        {
+            tables = await Http.GetFromJsonAsync<List<TableDto>>($"/api/table?search={searchTerm}");
+        }
+    }
+
+    private async Task SearchTables()
+    {
+        await LoadTables();
+    }
+
+    public class TableDto
+    {
+        public Guid Id { get; set; }
+        public string Title { get; set; } = "";
+        public string Source { get; set; } = "";
+        public string License { get; set; } = "";
+        public string Description { get; set; } = "";
+        public string DiceRange { get; set; } = "";
+    }
+}

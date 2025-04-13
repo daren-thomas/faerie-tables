@@ -1,0 +1,85 @@
+﻿@page "/tableeditor/{TableId:guid}"
+@inject HttpClient Http
+@inject NavigationManager NavManager
+
+<h3>Table Editor</h3>
+
+@if (table == null)
+{
+<p>Loading table...</p>
+}
+else
+{
+<EditForm Model="table" OnValidSubmit="SaveTable">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-2">
+        <label>Title:</label>
+        <InputText class="form-control" @bind-Value="table.Title" />
+    </div>
+    <div class="mb-2">
+        <label>Description:</label>
+        <InputText class="form-control" @bind-Value="table.Description" />
+    </div>
+    <div class="mb-2">
+        <label>Dice Range:</label>
+        <InputText class="form-control" @bind-Value="table.DiceRange" />
+    </div>
+
+    <!-- Additional controls for editing columns/rows can be added here -->
+
+    <button type="submit" class="btn btn-success">Save</button>
+</EditForm>
+}
+
+@code {
+[Parameter]
+public Guid TableId { get; set; }
+private TableDto? table;
+
+protected override async Task OnInitializedAsync()
+{
+table = await Http.GetFromJsonAsync<TableDto>($"/api/table/{TableId}");
+}
+
+private async Task SaveTable()
+{
+var response = await Http.PutAsJsonAsync($"/api/table/{TableId}", table);
+if (response.IsSuccessStatusCode)
+{
+NavManager.NavigateTo("/tables");
+}
+else
+{
+// Handle error (e.g., display a message)
+}
+}
+
+public class TableDto
+{
+public Guid Id { get; set; }
+public string Title { get; set; } = "";
+public string Source { get; set; } = "";
+public string License { get; set; } = "";
+public string Description { get; set; } = "";
+public string DiceRange { get; set; } = "";
+public List<TableColumnDto> Columns { get; set; } = new();
+public List<TableRowDto> Rows { get; set; } = new();
+}
+
+public class TableColumnDto
+{
+public Guid Id { get; set; }
+public Guid TableId { get; set; }
+public string Name { get; set; } = "";
+public string Type { get; set; } = "text";
+}
+
+public class TableRowDto
+{
+public Guid Id { get; set; }
+public Guid TableId { get; set; }
+// Additional row details can be added as needed
+}
+}
