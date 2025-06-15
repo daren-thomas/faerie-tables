@@ -5,7 +5,7 @@
 
 <div class="mb-3">
     <label>Select Table:</label>
-    <select class="form-select" @bind="selectedTableId">
+    <select class="form-select" @bind="selectedTableId" @onchange="LoadTableDetails">
         <option value="">-- Select Table --</option>
         @if(tables != null)
         {
@@ -25,6 +25,18 @@
     </select>
 </div>
 
+@if (overrides != null && overrides.Any())
+{
+    <h4>Overrides</h4>
+    @foreach (var ovrd in overrides)
+    {
+        <div class="mb-2">
+            <label>@ovrd.Column</label>
+            <input class="form-control" @bind="ovrd.Value" />
+        </div>
+    }
+}
+
 <button class="btn btn-primary mb-3" @onclick="RollTable">Roll</button>
 
 @if (rollResult != null)
@@ -38,17 +50,57 @@
     </ul>
 }
 
+@if (sessionLog.Any())
+{
+    <h4>Session Log</h4>
+    <ul class="list-group">
+        @foreach (var entry in sessionLog)
+        {
+            <li class="list-group-item">
+                <strong>@entry.TableTitle</strong>
+                <ul>
+                    @foreach (var kvp in entry.Results)
+                    {
+                        <li>@kvp.Key: @kvp.Value</li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+}
+
 
 
 @code {
     private List<TableDto>? tables;
     private Guid selectedTableId;
+    private TableDto? selectedTable;
+    private List<OverrideDto>? overrides;
     private string mode = "row";
     private RollResponseDto? rollResult;
+    private List<Roll> sessionLog = new();
 
     protected override async Task OnInitializedAsync()
     {
         tables = await Http.GetFromJsonAsync<List<TableDto>>("/api/table");
+    }
+
+    private async Task LoadTableDetails(ChangeEventArgs _)
+    {
+        if (selectedTableId == Guid.Empty)
+        {
+            selectedTable = null;
+            overrides = null;
+            return;
+        }
+
+        selectedTable = await Http.GetFromJsonAsync<TableDto>($"/api/table/{selectedTableId}");
+        if (selectedTable?.Columns != null)
+        {
+            overrides = selectedTable.Columns
+                .Select(c => new OverrideDto { Column = c.Name, Value = string.Empty })
+                .ToList();
+        }
     }
 
     private async Task RollTable()
@@ -60,13 +112,23 @@
         {
             TableId = selectedTableId,
             Mode = mode,
-            Overrides = new List<OverrideDto>()
+            Overrides = overrides?.Where(o => !string.IsNullOrWhiteSpace(o.Value)).ToList()
         };
 
         var response = await Http.PostAsJsonAsync("/api/roll", rollRequest);
         if (response.IsSuccessStatusCode)
         {
             rollResult = await response.Content.ReadFromJsonAsync<RollResponseDto>();
+            if (rollResult != null)
+            {
+                sessionLog.Add(new Roll
+                {
+                    TableId = rollResult.TableId,
+                    TableTitle = rollResult.TableTitle,
+                    Mode = rollResult.Mode,
+                    Results = rollResult.Results
+                });
+            }
         }
         else
         {
@@ -78,6 +140,15 @@
     {
         public Guid Id { get; set; }
         public string Title { get; set; } = "";
+        public List<TableColumnDto> Columns { get; set; } = new();
+    }
+
+    public class TableColumnDto
+    {
+        public Guid Id { get; set; }
+        public Guid TableId { get; set; }
+        public string Name { get; set; } = "";
+        public string Type { get; set; } = "text";
     }
 
     public class RollRequestDto
