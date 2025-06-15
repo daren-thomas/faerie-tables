@@ -1,4 +1,4 @@
-# Fairie-Tables: Random Table Manager Specification
+# Faerie-Tables: Random Table Manager Specification
 
 This document outlines the requirements and design for a random table management tool (faerie-tables) intended for role-playing games. The tool supports managing random tables (including dice values and multi-column layouts), executing random or manual rolls, and maintaining a session log. The application is built using Blazor for the UI, an ASP.NET Core Web API for backend operations, Entity Framework Core with SQLite for data persistence, and is packaged as a Docker image for easy deployment.
 
