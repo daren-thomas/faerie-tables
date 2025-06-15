@@ -19,4 +19,4 @@ public class TableDto
     public List<TableRowDto> Rows { get; set; } = new();
 }
 
-// If you want separate Dto for RowValue, can do this
+// If you want a separate DTO for RowValue, create another class.
