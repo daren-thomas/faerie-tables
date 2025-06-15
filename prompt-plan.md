@@ -26,7 +26,7 @@ Below is a structured plan that starts at a high level, then breaks the project 
     - **Roll UI:** Fuzzy search -> roll and display result.
 5. **Testing:**
     
-    - **Unit Tests:** Validate logic for rolling, merging logs, data validations.
+    - **Unit Tests:** Validate rolling logic and data validations.
     - **Integration Tests:** API endpoints with an in-memory DB.
     - **UI Tests:** Basic Blazor component tests.
 6. **Containerization (Docker):**
@@ -60,7 +60,7 @@ Below is a structured plan that starts at a high level, then breaks the project 
 4. **Chunk D: Rolling Logic**
     
     - Implement random roll logic (row-based vs. column-based).
-    - Add a manual override mechanic (log merging).
+    - Add a manual override mechanic.
     - Write tests (unit + integration) to confirm correct rolling results.
 5. **Chunk E: Blazor Frontend**
     

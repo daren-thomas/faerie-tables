@@ -110,8 +110,8 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
 
 Validation Check:**
  - [ ] All pages make successful API calls
- - [ ] Rolling results and logs display correctly
- - [ ] Manual override updates are reflected in the log
+ - [ ] Rolling results display correctly
+ - [ ] Manual override updates are reflected in the results
 
 ---
 
