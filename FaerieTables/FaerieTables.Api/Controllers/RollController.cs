@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace FaerieTables.Api.Controllers
 {
+    /// <summary>
+    /// Rolls against stored tables and returns the results.
+    /// </summary>
     [ApiController]
     [Route("api/[controller]")]
     public class RollController : ControllerBase

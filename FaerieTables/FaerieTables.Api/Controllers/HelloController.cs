@@ -2,6 +2,9 @@
 
 namespace FaerieTables.Api.Controllers;
 
+/// <summary>
+/// Provides a simple greeting endpoint.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class HelloController : ControllerBase

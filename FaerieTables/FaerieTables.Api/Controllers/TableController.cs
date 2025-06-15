@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace FaerieTables.Api.Controllers;
 
+/// <summary>
+/// Manages CRUD operations for random tables.
+/// </summary>
 [ApiController]
 [Route("api/[controller]")]
 public class TableController(ITableService tableService) : ControllerBase
