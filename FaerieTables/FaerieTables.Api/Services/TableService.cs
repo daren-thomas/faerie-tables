@@ -41,7 +41,11 @@ public class TableService : ITableService
 
     public async Task<Table?> GetByIdAsync(Guid id)
     {
-        return await _context.Tables.FindAsync(id);
+        return await _context.Tables
+            .Include(t => t.Columns)
+            .Include(t => t.Rows)
+                .ThenInclude(r => r.RowValues)
+            .FirstOrDefaultAsync(t => t.Id == id);
     }
 
     public async Task<Table> CreateAsync(Table table)

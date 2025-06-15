@@ -47,8 +47,19 @@ public class TableController(ITableService tableService) : ControllerBase
             Source = table.Source,
             License = table.License,
             Description = table.Description,
-            DiceRange = table.DiceRange
-            // Could also map columns/rows here if needed
+            DiceRange = table.DiceRange,
+            Columns = table.Columns.Select(c => new TableColumnDto
+            {
+                Id = c.Id,
+                TableId = c.TableId,
+                Name = c.Name,
+                Type = c.Type
+            }).ToList(),
+            Rows = table.Rows.Select(r => new TableRowDto
+            {
+                Id = r.Id,
+                TableId = r.TableId
+            }).ToList()
         };
         return Ok(dto);
     }
