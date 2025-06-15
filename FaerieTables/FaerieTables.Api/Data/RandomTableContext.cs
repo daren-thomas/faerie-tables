@@ -17,9 +17,6 @@ public class RandomTableContext : DbContext
     public DbSet<RowValue> RowValues => Set<RowValue>();
     public DbSet<Tag> Tags => Set<Tag>();
     public DbSet<TableTag> TableTags => Set<TableTag>();
-    public DbSet<Session> Sessions => Set<Session>();
-    public DbSet<Roll> Rolls => Set<Roll>();
-    public DbSet<RollResult> RollResults => Set<RollResult>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -58,17 +55,5 @@ public class RandomTableContext : DbContext
             .HasMany(tg => tg.TableTags)
             .WithOne(tt => tt.Tag)
             .HasForeignKey(tt => tt.TagId);
-
-        // Session -> Roll (1-to-many)
-        modelBuilder.Entity<Session>()
-            .HasMany(s => s.Rolls)
-            .WithOne(r => r.Session)
-            .HasForeignKey(r => r.SessionId);
-
-        // Roll -> RollResult (1-to-many)
-        modelBuilder.Entity<Roll>()
-            .HasMany(r => r.RollResults)
-            .WithOne(rr => rr.Roll)
-            .HasForeignKey(rr => rr.RollId);
     }
 }

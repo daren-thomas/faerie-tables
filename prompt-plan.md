@@ -13,19 +13,17 @@ Below is a structured plan that starts at a high level, then breaks the project 
 2. **Data Modeling & Database Setup:**
     
     - Define entities:
-        - Table, TableColumn, TableRow, RowValue, Tag, TableTag, Session, Roll, RollResult
+        - Table, TableColumn, TableRow, RowValue, Tag, TableTag
     - Configure Entity Framework Core with SQLite.
     - Create migrations and initialize the database.
 3. **API Endpoints:**
     
     - **Table Management:** CRUD for tables and related columns/rows/tags.
-    - **Rolling:** Two modes (row vs. column) plus manual override (log merges).
-    - **Session Logging:** Retrieve, export, and clear logs.
+    - **Rolling:** Two modes (row vs. column) plus manual override.
 4. **Blazor Frontend:**
     
     - **Table Management UI:** Create/import/edit tables.
-    - **Roll UI:** Fuzzy search -> roll -> log results.
-    - **Session Log UI:** Display, export, and clear session logs.
+    - **Roll UI:** Fuzzy search -> roll and display result.
 5. **Testing:**
     
     - **Unit Tests:** Validate logic for rolling, merging logs, data validations.
@@ -64,21 +62,16 @@ Below is a structured plan that starts at a high level, then breaks the project 
     - Implement random roll logic (row-based vs. column-based).
     - Add a manual override mechanic (log merging).
     - Write tests (unit + integration) to confirm correct rolling results.
-5. **Chunk E: Session Logging**
-    
-    - Create session entity and endpoints to start/end sessions.
-    - Implement the roll log, exporting to Markdown, clearing logs, etc.
-    - Write integration tests for session logs.
-6. **Chunk F: Blazor Frontend**
+5. **Chunk E: Blazor Frontend**
     
     - Fuzzy search for tables and basic table-management screens.
-    - Rolling UI with session log display.
-    - Add triggers for manual overrides, log updates.
-7. **Chunk G: Docker Container & Deployment**
+    - Rolling UI to display results.
+    - Add triggers for manual overrides.
+6. **Chunk F: Docker Container & Deployment**
     
     - Create a Dockerfile that builds the solution.
     - Verify container runs with EF Core migrations and the Blazor UI accessible.
-8. **Chunk H: Final Integration & Polishing**
+7. **Chunk G: Final Integration & Polishing**
     
     - Ensure all endpoints and UI work seamlessly.
     - Add OpenAPI/Swagger documentation.
@@ -130,19 +123,9 @@ Below, each chunk is broken down into its constituent steps for clarity.
     - Randomly selects values for each column (column-based).
 2. **Integrate overrides**:
     - If an override is specified, that value replaces the random result for a given column.
-3. **Add endpoints** in a `RollController`:
-    - `POST /rolls` for random roll execution.
-    - `POST /rolls/manual` for manual override logging.
-4. **Write tests** for random distribution correctness, override merges, etc.
-
-### **Chunk E: Session Logging**
-
-1. **Create Session, Roll, and RollResult** entities if not already done.
-2. **Add a `SessionController`** with endpoints to start a session, get logs, clear logs, export logs, etc.
-3. **Link `Roll` entries** to a session ID in the `POST /rolls` endpoint or via a parameter.
-4. **Implement Markdown export** with a small method that formats logs.
-5. **Write tests** ensuring logs are created, exported, and cleared as expected.
-
+3. **Add endpoint** in a `RollController`:
+    - `POST /rolls` for random roll execution (supports manual overrides).
+4. **Write tests** for random distribution correctness and overrides.
 ### **Chunk F: Blazor Frontend**
 
 1. **Set up minimal routing and pages** (e.g., `Index.razor`, `Tables.razor`).
@@ -151,9 +134,7 @@ Below, each chunk is broken down into its constituent steps for clarity.
 4. **Implement a Rolling page**:
     - Let users pick a table from a search or list.
     - Show roll results.
-    - Store results in a session log displayed at the bottom of the page.
 5. **Implement manual override** UI for columns.
-6. **Implement log export** and clearing.
 
 ### **Chunk G: Docker Container & Deployment**
 
@@ -233,15 +214,10 @@ Now, define the following entities in the FaerieTables.Api project (or a FaerieT
 - RowValue (Id GUID, RowId GUID, ColumnId GUID, Value string)
 - Tag (Id GUID, Name string)
 - TableTag (TableId GUID, TagId GUID) // many-to-many
-- Session (SessionId GUID, UserId string, Name string, Description string)
-- Roll (RollId GUID, SessionId GUID, TableId GUID, TableTitle string, Mode string, Timestamp DateTime)
-- RollResult (Id GUID, RollId GUID, TableColumnId GUID, Value string)
 
 Use EF Core fluent API in OnModelCreating to set up relationships:
 - One Table has many TableColumns, many TableRows, and many-to-many Tags.
 - One TableRow has many RowValues.
-- One Session can have many Rolls.
-- One Roll can have many RollResults.
 
 Finally, create a migration named "AddCoreEntities" and apply it, verifying the database is updated. Provide a code snippet with the entity definitions and the context configuration.
 ```
@@ -276,35 +252,16 @@ Provide the final TableController code, TableDto, any validation attributes, and
    - Row mode: pick one row at random.
    - Column mode: for each column, pick a random row’s value for that column.
 2. Add a 'POST /rolls' endpoint in a RollController that:
-   - Accepts a JSON body with { "table_id": "...", "session_id": "...", "mode": "row or column", "overrides": [ { "column": "...", "value": "..." } ] }.
-   - Calls the RollingService, applies overrides, and persists a Roll and the associated RollResult records.
+   - Accepts a JSON body with { "table_id": "...", "mode": "row or column", "overrides": [ { "column": "...", "value": "..." } ] }.
+   - Calls the RollingService, applies overrides, and returns the results.
 3. Return the roll results as JSON.
-4. Write unit tests for RollingService to confirm random distribution is correct, override logic is correct, etc. Then write integration tests for the RollController.
+4. Write unit tests for RollingService to confirm random distribution and override logic. Then write integration tests for the RollController.
 
 Provide the code for RollingService, the RollController, test cases, and any updates to the DbContext.
 ```
 
 ---
 
-### **Prompt 6: Session and Logging**
-
-```text
-1. Implement a SessionController that:
-   - Allows creating a session (POST /sessions) with a name/description.
-   - Retrieves session info by ID.
-   - Retrieves all Rolls associated with a session (GET /sessions/{sessionId}/rolls).
-2. In the RollController, ensure that each roll is associated with the session. 
-3. Implement an endpoint to export a session’s rolls as Markdown, e.g., GET /sessions/{sessionId}/export. 
-4. Implement an endpoint to clear a session’s roll log, e.g., DELETE /sessions/{sessionId}/rolls.
-5. Write integration tests to confirm that:
-   - Rolls are associated with a session.
-   - The Markdown export includes the correct table references and values.
-   - Clearing the session’s rolls works properly.
-
-Return the final code for SessionController, updates to RollController, plus the tests.
-```
-
----
 
 ### **Prompt 7: Blazor Frontend – Basic UI**
 
@@ -325,54 +282,4 @@ Add the following pages/components to the Blazor app:
    - Lets the user select a table (via a dropdown or search component) 
    - Offers two modes: row or column
    - On roll, calls the POST /rolls endpoint
-   - Displays the results
-   - Displays a session log at the bottom (if we have a session loaded) and a button to override rolls 
-   - Possibly a manual override button or inline override UI
-
-4. Session management components for viewing logs, exporting logs to Markdown, clearing logs, etc.
-
-Include minimal styling and route definitions. Provide the code for these components or a stub for each so that we can build upon them. Show how you're making HTTP calls from Blazor to the API.
-```
-
----
-
-### **Prompt 8: Dockerization**
-
-```text
-1. Create a Dockerfile in the solution root that:
-   - Copies the .sln and .csproj files
-   - Restores dependencies
-   - Publishes in Release mode
-   - Exposes the necessary port
-   - Uses 'aspnet:7.0' or appropriate base image
-
-2. Update the .csproj or solution so that the publish build includes both the Web and Api components. 
-3. Confirm that the SQLite database is created or updated at startup. If needed, call "dotnet ef database update" in the Docker build or entrypoint.
-
-Finally, show how to build and run the container with:
-   docker build -t faerie-tables .
-   docker run -p 8080:80 faerie-tables
-
-Provide the Dockerfile, any changes in Program.cs for DB migrations, and testing instructions.
-```
-
----
-
-### **Prompt 9: Final Polishing and Integration**
-
-```text
-We are wrapping up. Please:
-
-1. Add Swagger/OpenAPI support to the FaerieTables.Api project using Swashbuckle or similar. 
-2. Ensure all controllers are annotated with appropriate route and Swagger doc attributes. 
-3. Verify all integration tests pass and that the Blazor UI can consume these endpoints properly. 
-4. Perform any final code cleanup: remove unnecessary logs, ensure consistent naming and style, etc.
-
-Provide the updated Program.cs, controller annotations, and a final summary of changes. Confirm that the final Docker image runs as expected, with a note on how to access the Swagger UI inside the container (e.g., http://localhost:8080/swagger).
-```
-
----
-
-## **Conclusion**
-
-By following these progressively refined steps—and feeding each prompt in turn to a code-generation tool—you’ll be able to implement _Faerie-Tables_ incrementally with robust testing at each stage. Each prompt is self-contained, ensuring no “orphaned code” remains unintegrated. You can adjust prompt wording or complexity as needed, but the overall approach remains the same: **small, test-driven increments that build on previous steps, culminating in a fully functional and containerized solution.**
+   - Displays the resultsBy following these progressively refined steps—and feeding each prompt in turn to a code-generation tool—you’ll be able to implement _Faerie-Tables_ incrementally with robust testing at each stage. Each prompt is self-contained, ensuring no “orphaned code” remains unintegrated. You can adjust prompt wording or complexity as needed, but the overall approach remains the same: **small, test-driven increments that build on previous steps, culminating in a fully functional and containerized solution.**
