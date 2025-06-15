@@ -45,7 +45,7 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
 ## Chunk C: Table Management API
 
 - [x] **Define Entities** (if not done in a separate library):
-  - [x] `Table`, `TableColumn`, `TableRow`, `RowValue`, `Tag`, `TableTag`, `Session`, `Roll`, `RollResult`
+  - [x] `Table`, `TableColumn`, `TableRow`, `RowValue`, `Tag`, `TableTag`
 - [x] **Create DTO classes** for table management (e.g., `TableDto`)
 - [x] **Implement TableController** with:
   - [x] `GET /tables` (searchable)
@@ -74,9 +74,8 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
   - [x] Override merges
 - [x] **Implement RollController**:
   - [x] `POST /rolls`:
-    - [x] Accepts table ID, session ID, mode, overrides
-    - [x] Calls RollingService, persists Roll & RollResult
-  - [x] `POST /rolls/manual` (optional approach for manual-only rolls)
+    - [x] Accepts table ID, mode, overrides
+    - [x] Calls RollingService and returns results
 - [x] **Unit Tests** for RollingService:
   - [x] Random selection correctness
   - [x] Override logic
@@ -85,29 +84,6 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
 **Validation Check:**
 - [x] Rolling endpoints produce correct random results
 - [x] Overrides are properly applied
-
----
-
-## Chunk E: Session Logging
-
-- [x] **Create SessionController**:
-  - [x] `POST /sessions` to create a session
-  - [x] `GET /sessions/{sessionId}` to retrieve session details
-  - [x] `GET /sessions/{sessionId}/rolls` for all rolls in a session
-  - [x] `DELETE /sessions/{sessionId}/rolls` to clear logs
-- [x] **Link Rolls** to session ID
-- [x] **Markdown export** (e.g., `GET /sessions/{sessionId}/export`)
-  - [x] Format each roll as a bullet list item with table references
-- [x] **Integration Tests** for:
-  - [x] Session creation
-  - [x] Roll retrieval
-  - [x] Export to Markdown
-  - [x] Clearing logs
-
-**Validation Check:**
-- [x] Session data is correctly persisted
-- [x] Markdown export is formatted properly
-- [x] Clearing logs works as intended
 
 ---
 
@@ -132,11 +108,7 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
      - [ ] Random roll -> display results
      - [ ] Manual override UI -> calls override endpoints
 
-4. **Session Log UI**
-   - [ ] Show current session’s rolls
-   - [ ] Buttons to export as Markdown, clear logs
-
-**Validation Check:**
+Validation Check:**
 - [ ] All pages make successful API calls
 - [ ] Rolling results and logs display correctly
 - [ ] Manual override updates are reflected in the log

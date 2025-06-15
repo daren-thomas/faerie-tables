@@ -19,32 +19,21 @@ This document outlines the requirements and design for a random table management
     - Tables can be exported in the interchange format.
     - Optionally, export as a markdown table (including extra data needed for integration with dice-roller plugins in Obsidian).
 
-### 1.2. Rolling and Session Logging
+### 1.2. Rolling
 
 - **Main Use Case:**
     - Look up a table via a fuzzy search (searching by title, description, and tags).
     - Roll on the table using two modes:
         - **Row Roll:** A single roll that randomly selects an entire row.
         - **Column Roll:** A separate roll for each column.
-- **Roll Log:**
-    - A persistent log at the bottom of the UI records each roll. Each log entry includes:
-        - The table (displayed as a clickable link with the table’s GUID).
-        - The column(s) and rolled values (comma-separated if multiple columns).
     - **Manual Overrides:**
-        - Users can override a roll by clicking on a table cell or using a dropdown in the log. This immediately logs the override.
-        - Additional clicks on other columns can merge into the same log entry unless multiple selections for the same column occur (which produce separate entries).
-- **Log Management:**
-    - A “Download Markdown” button exports the session log as a bullet list (e.g., `- [Dungeon Encounters](#GUID) - Encounter: Goblin Ambush, Environment: Dark Cave`).
-    - A “Clear Log” button clears the current session log.
-- **Sessions:**
-    - A session groups a sequence of rolls. A session is associated with a user and may have a name/description. This allows users to have multiple sessions (e.g., one per campaign).
+        - Users can override a roll by specifying custom values for columns.
 
 ### 1.3. API-Driven Design
 
 - **RESTful Endpoints** are provided for:
     - **Table Management:** CRUD operations for tables.
     - **Roll Execution:** Endpoints for executing rolls (random and manual overrides).
-    - **Session Logging:** Retrieving, exporting, and clearing roll logs.
 - **Authentication/Authorization:**
     - Not detailed in this spec, but should be integrated if multi-user support is required.
 
@@ -102,20 +91,6 @@ This document outlines the requirements and design for a random table management
 
 - **TableId, TagId.**
 
-#### Session Entity
-
-- **SessionId (GUID), UserId, Name, Description (string).**
-- **Relationship:** One-to-many with **Roll**.
-
-#### Roll Entity
-
-- **RollId (GUID), SessionId, TableId, TableTitle, Mode (row/column), Timestamp (DateTime).**
-- **Relationship:** One-to-many with **RollResult**.
-
-#### RollResult Entity
-
-- **Id, RollId, TableColumnId, Value (string).**
-
 ### 3.2. Entity Framework Configuration
 
 - **DbContext:**
@@ -152,57 +127,18 @@ This document outlines the requirements and design for a random table management
     - **Response:** Confirmation message.
     - **Errors:** 404 if not found.
 
-### 4.2. Roll Execution Endpoints
+### 4.2. Roll Execution Endpoint
 
 - **POST /rolls**
-    
-    - **Request:**
-        
-        json
-        
-        Copy
-        
-        `{   "table_id": "GUID",   "session_id": "GUID",   "mode": "row/column",   "overrides": [      { "column": "ColumnName", "value": "CustomValue" }   ] }`
-        
+
+    - **Request:** `{ "table_id": "GUID", "mode": "row|column", "overrides": [ { "column": "ColumnName", "value": "CustomValue" } ] }`
     - **Process:**
         - Validate table existence.
         - In row mode, select one random row; in column mode, roll for each column.
         - Apply any manual overrides.
-        - Create a Roll entity with current timestamp.
-        - Create associated RollResult entries.
-    - **Response:** Roll details (roll_id, table, results, timestamp).
+    - **Response:** Dictionary of column names to rolled values.
     - **Errors:** 400 for missing/invalid parameters, 404 if table not found.
-- **POST /rolls/manual**
-    
-    - **Request:**
-        
-        json
-        
-        Copy
-        
-        `{   "table_id": "GUID",   "session_id": "GUID",   "manual_entry": { "column": "ColumnName", "value": "CustomValue" } }`
-        
-    - **Process:**
-        - Record a manual override roll. If the client desires merge behavior, the last roll entry is updated appropriately.
-    - **Response:** Confirmation with updated roll record.
-    - **Errors:** 400 for invalid input.
 
-### 4.3. Session Log Endpoints
-
-- **GET /log**
-    
-    - **Query:** Session identifier.
-    - **Response:** List of Roll entries for the session, ordered by timestamp.
-    - **Errors:** 400 if session_id is missing.
-- **GET /log/export**
-    
-    - **Response:** Markdown transcript of the session log formatted as bullet points.
-    - **Content-Type:** `text/markdown`.
-- **DELETE /log**
-    
-    - **Process:** Clear all roll entries for the given session.
-    - **Response:** Confirmation message.
-    - **Errors:** 400 if session_id is missing.
 
 ## 5. Error Handling & Validation
 
@@ -221,7 +157,7 @@ This document outlines the requirements and design for a random table management
 
 - **Business Logic:**
     - Test random roll generation for both row and column modes.
-    - Validate manual override logic and log merging behavior.
+    - Validate manual override logic.
 - **Data Validation:**
     - Test input validation for creating/updating tables, ensuring invalid dice_range formats are rejected.
 
@@ -229,9 +165,7 @@ This document outlines the requirements and design for a random table management
 
 - **API Endpoints:**
     - Test each endpoint (GET, POST, PUT, DELETE) using an in-memory SQLite database.
-    - Verify that relationships (e.g., table to tags, roll to roll results) are correctly persisted.
-- **Session Log:**
-    - Test retrieval, markdown export, and deletion of log entries.
+    - Verify that relationships (e.g., table to tags) are correctly persisted.
 
 ### 6.3. UI Tests (Blazor)
 
