@@ -93,25 +93,25 @@ A comprehensive, step-by-step list to ensure incremental progress and thorough t
    - [ ] Ensure `HttpClient` or appropriate service is set up for API calls
 
 2. **Table Management Pages**
-   - [ ] `TablesList.razor`:
-     - [ ] Fetch `/tables`, display list
-     - [ ] Search box for fuzzy search
-   - [ ] `TableEditor.razor`:
-     - [ ] Display/edit table details (title, dice range, etc.)
+   - [x] `TablesList.razor`:
+     - [x] Fetch `/tables`, display list
+     - [x] Search box for fuzzy search
+   - [x] `TableEditor.razor`:
+     - [x] Display/edit table details (title, dice range, etc.)
      - [ ] Add/Edit/Delete columns and rows
-     - [ ] Calls relevant API endpoints
+     - [x] Calls relevant API endpoints
 
 3. **Rolling Page**
-   - [ ] `RollPage.razor`:
-     - [ ] Table selection dropdown or search
-     - [ ] Mode selection (row vs. column)
-     - [ ] Random roll -> display results
+   - [x] `RollPage.razor`:
+     - [x] Table selection dropdown or search
+     - [x] Mode selection (row vs. column)
+     - [x] Random roll -> display results
      - [ ] Manual override UI -> calls override endpoints
 
 Validation Check:**
-- [ ] All pages make successful API calls
-- [ ] Rolling results and logs display correctly
-- [ ] Manual override updates are reflected in the log
+ - [ ] All pages make successful API calls
+ - [ ] Rolling results and logs display correctly
+ - [ ] Manual override updates are reflected in the log
 
 ---
 

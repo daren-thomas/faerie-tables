@@ -6,10 +6,9 @@ This document outlines the requirements and design for a random table management
 
 ### 1.1. Table Management
 
-- **Import and Creation:**
+- **Creation:**
     - Ability to create new random tables manually.
-    - Import tables via an interchange format (YAML/JSON) that includes metadata (title, tags, source, license, description), dice range, column definitions, and rows.
-    - Upload CSV files (via standard file upload) for import; conversion to the interchange format can be handled by an importer module.
+    - Import and CSV upload are planned future enhancements.
 - **Editing:**
     - Users can append or modify columns and rows.
     - Rows may include single values or ranges (e.g., "7-11"). Dice ranges must follow the “XdY” format (supporting shorthand like “d20”).
@@ -103,33 +102,33 @@ This document outlines the requirements and design for a random table management
 
 ### 4.1. Table Management Endpoints
 
-- **GET /tables**
+- **GET /api/table**
     
     - **Query:** Optional fuzzy search (`search`), pagination (`page`, `limit`).
     - **Response:** List of tables (including metadata, dice_range, etc.).
-- **GET /tables/{id}**
+  - **GET /api/table/{id}**
     
     - **Response:** Detailed table information with columns, rows (and row values), and tags.
     - **Errors:** Return 404 if not found.
-- **POST /tables**
+  - **POST /api/table**
     
     - **Request:** JSON matching the interchange format with metadata and table structure.
     - **Validation:** Validate dice_range format and required fields.
     - **Response:** Created table with GUID.
     - **Errors:** 400 for validation errors.
-- **PUT /tables/{id}**
+  - **PUT /api/table/{id}**
     
     - **Request:** Updated table details.
     - **Response:** Updated table object.
     - **Errors:** 404 if not found, 400 for validation errors.
-- **DELETE /tables/{id}**
+  - **DELETE /api/table/{id}**
     
     - **Response:** Confirmation message.
     - **Errors:** 404 if not found.
 
 ### 4.2. Roll Execution Endpoint
 
-- **POST /rolls**
+- **POST /api/roll**
 
     - **Request:** `{ "table_id": "GUID", "mode": "row|column", "overrides": [ { "column": "ColumnName", "value": "CustomValue" } ] }`
     - **Process:**
