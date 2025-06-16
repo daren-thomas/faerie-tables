@@ -27,7 +27,46 @@ else
         <InputText class="form-control" @bind-Value="table.DiceRange" />
     </div>
 
-    <!-- Additional controls for editing columns/rows can be added here -->
+
+    <h4>Columns</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Type</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var col in table.Columns)
+            {
+                <tr>
+                    <td><InputText class="form-control" @bind-Value="col.Name" /></td>
+                    <td><InputText class="form-control" @bind-Value="col.Type" /></td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteColumn(col)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-secondary mb-3" @onclick="AddColumn">Add Column</button>
+
+    <h4>Rows</h4>
+    <table class="table">
+        <tbody>
+            @foreach (var row in table.Rows)
+            {
+                <tr>
+                    <td>Row @table.Rows.IndexOf(row) + 1</td>
+                    <td>
+                        <button type="button" class="btn btn-danger btn-sm" @onclick="() => DeleteRow(row)">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="button" class="btn btn-secondary mb-3" @onclick="AddRow">Add Row</button>
 
     <button type="submit" class="btn btn-success">Save</button>
 </EditForm>
